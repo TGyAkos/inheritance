@@ -21,5 +21,22 @@ namespace inheritanceTests
             Assert.AreEqual(579, result);
 
         }
+
+        [TestMethod]
+        public void Str_WithValidData_ReturnsAppendedStr()
+        {
+            // Arrange
+            string firstString = "asd";
+            string secondString = "fgh";
+            string result;
+            Program program = new Program();
+
+            // Act
+            result = program.AddString(firstString, secondString);
+
+            // Assert
+            Assert.AreEqual("asdfgh", result);
+
+        }
     }
 }
