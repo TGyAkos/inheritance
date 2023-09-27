@@ -1,3 +1,6 @@
+using System;
+using System.IO; 
+
 using inheritance;
 
 namespace inheritanceTests
@@ -5,6 +8,26 @@ namespace inheritanceTests
     [TestClass]
     public class ProgramTests
     {
+        public TestContext TestContext { get; set; }
+        private Program Program { get; set; }
+        private string NoLakcim;
+
+        [TestInitialize]
+        public void Initialize()
+        {
+            Program = new Program();
+            
+            if (TestContext.Properties.Contains("NoLakcim"))
+            {
+                NoLakcim = TestContext.Properties["Nolakcim"] as string;
+            }
+
+        }
+        [TestCleanup]
+        public void Cleanup()
+        {
+            Program = null;
+        }
         [TestMethod]
         public void Int_WithValidData_ReturnsInt()
         {
@@ -12,10 +35,9 @@ namespace inheritanceTests
             int firstInt = 123;
             int secondInt = 456;
             int result;
-            Program program = new Program();
-
+            
             // Act
-            result = program.AddInt(firstInt, secondInt);
+            result = Program.AddInt(firstInt, secondInt);
 
             // Assert
             Assert.AreEqual(579, result);
