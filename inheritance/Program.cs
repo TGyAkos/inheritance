@@ -11,6 +11,11 @@
         {
             return x + y;
         }
+
+        public string AddString(string str1, string str2)
+        {
+            return str1 + str2;
+        }
     }
 }
 
