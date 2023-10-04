@@ -36,7 +36,7 @@ namespace inheritance
         {
             if (Fizetes > 300000)
             {
-                SzuletesiDatum[0] -= 10;
+                SzuletesiDatum[0] += 10;
             }
         }
     }
