@@ -31,12 +31,32 @@ namespace inheritance
             }
         }
 
+
+
         // TODO actually implement it according to specs
-        public Szemelyek(string nev, int[] szuletesiDatum, string lakcim = "Nincs megadva")
+        public Szemelyek(string nev, int[] szuletesiDatum, string lakcim)
         {
             Nev = nev;
             SzuletesiDatum = szuletesiDatum;
             Lakcim = lakcim;
+        }
+        public Szemelyek(string nev)
+        {
+            Nev = nev;
+            SzuletesiDatum = new int[3];
+            Lakcim = "Nincs megadva";
+        }
+        public Szemelyek(string nev, string lakcim)
+        {
+            Nev = nev;
+            SzuletesiDatum = new int[3];
+            Lakcim = lakcim;
+        }
+        public Szemelyek(string nev, int[] szuletesiDatum)
+        {
+            Nev = nev;
+            SzuletesiDatum = szuletesiDatum;
+            Lakcim = "Nincs megadva";
         }
 
         public override string ToString()
@@ -46,7 +66,7 @@ namespace inheritance
 
         public virtual void Kor()
         {
-           
+
         }
     }
 }
