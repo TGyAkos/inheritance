@@ -93,7 +93,13 @@ namespace OROKLES
         {
             private string beosztas;
             private double fizetes;
+            private string osztalyKod;
 
+            public string OsztalyKod
+            {
+                get { return osztalyKod; }
+                set { osztalyKod = value; }
+            }
 
             public string Beosztas
             {
@@ -114,6 +120,12 @@ namespace OROKLES
             {
                 this.beosztas = beosztas;
                 this.fizetes = fizetes;
+            }
+            public Alkalmazott(string nev, string beosztas, double fizetes, string osztalyKod) : base(nev)
+            {
+                this.beosztas = beosztas;
+                this.fizetes = fizetes;
+                this.osztalyKod = osztalyKod;
             }
 
             public void FizetesEmel(double osszeg)
@@ -138,70 +150,150 @@ namespace OROKLES
             {
                 get { return $"{base.Nev} ({beosztas})"; }
             }
+
         }
 
-        class Vallalat
+        class Vállalat
         {
-            public Dictionary<string, List<Alkalmazott>> Osztalyok { get; } = new Dictionary<string, List<Alkalmazott>>();
+            public string OsztályKód { get; set; }
+            public string OsztályNeve { get; set; }
+            public List<Alkalmazott> Alkalmazottak = new List<Alkalmazott>();
 
-            public void HozzaadAlkalmazott(string osztalyKod, Alkalmazott alkalmazott)
+            public Dictionary<string, List<Alkalmazott>> Csoportbontás;
+
+            public Vállalat(string osztályKód, string osztályNeve)
             {
-                if (!Osztalyok.ContainsKey(osztalyKod))
+                OsztályKód = osztályKód;
+                OsztályNeve = osztályNeve;
+            }
+            public void Belep(Alkalmazott alkalmazott)
+            {
+                string osztalyKod = alkalmazott.OsztalyKod;
+                if (!Csoportbontás.ContainsKey(osztalyKod))
                 {
-                    Osztalyok[osztalyKod] = new List<Alkalmazott>();
+                    Csoportbontás[osztalyKod] = new List<Alkalmazott>();
                 }
-                Osztalyok[osztalyKod].Add(alkalmazott);
+                Csoportbontás[osztalyKod].Add(alkalmazott);
+                Alkalmazottak.Add(alkalmazott);
+            }
+
+            public void Kilep(Alkalmazott alkalmazott)
+            {
+                string osztalyKod = alkalmazott.OsztalyKod;
+                if (Csoportbontás.ContainsKey(osztalyKod))
+                {
+                    Csoportbontás[osztalyKod].Remove(alkalmazott);
+                }
+                Alkalmazottak.Remove(alkalmazott);
+            }
+            public void Modosit(Alkalmazott alkalmazott, int osszeg)
+            {
+                alkalmazott.Fizetes = osszeg;
+            }
+
+            public void ListazAlkalmazottak(string osztalyKod)
+            {   
+                if (Csoportbontás.ContainsKey(osztalyKod))
+                {
+                    Console.WriteLine($"Alkalmazottak az osztályban ({osztalyKod}):");
+                    if (Csoportbontás[osztalyKod].Count() == 0)
+                    {
+                        Console.WriteLine($"Nincsenek alkalmazottak az osztályban.");
+                    }
+                    else
+                    {
+                        foreach (var alkalmazott in Csoportbontás[osztalyKod])
+                        {
+                            Console.WriteLine(alkalmazott.ToString());
+                        }
+                    }
+                }
+                else
+                {
+                    Console.WriteLine($"Nincsenek alkalmazottak az osztályban ({osztalyKod}).");
+                }
+            }
+
+            public override string ToString()
+            {
+                return $"Osztálykód: {OsztályKód}, Osztálynév: {OsztályNeve}";
             }
         }
         static void Main(string[] args)
         {
-            Vallalat vallalat = new Vallalat();
+            // Személy példányok létrehozása és tesztelése
+            Szemely szemely1 = new Szemely("John Doe");
+            szemely1.Lakcim = "Budapest, Kossuth utca 5.";
+            int[] szuletesiDatum1 = { 1990, 5, 15 };
+            szemely1.szuletesiDatum = szuletesiDatum1;
 
-            Console.WriteLine("Személy adatok:");
+            Szemely szemely2 = new Szemely("Jane Smith", "New York, 123 Main St");
+            int[] szuletesiDatum2 = { 1985, 8, 25 };
+            szemely2.szuletesiDatum = szuletesiDatum2;
 
-            Console.Write("Név: ");
-            string nev = Console.ReadLine();
+            Console.WriteLine("Személy 1 adatai:");
+            Console.WriteLine(szemely1.ToString());
+            Console.WriteLine($"Kor: {szemely1.Kor()} év");
+            Console.WriteLine($"Születési év: {szemely1["ev"]}");
 
-            Console.Write("Lakcím: ");
-            string lakcim = Console.ReadLine();
+            Console.WriteLine("\nSzemély 2 adatai:");
+            Console.WriteLine(szemely2.ToString());
+            Console.WriteLine($"Kor: {szemely2.Kor()} év");
+            Console.WriteLine($"Születési év: {szemely2["ev"]}");
 
-            Console.Write("Születési év: ");
-            int ev = int.Parse(Console.ReadLine());
+            // Alkalmazott példányok létrehozása és tesztelése
+            Alkalmazott alkalmazott1 = new Alkalmazott("John Doe", "Programozó", 40000, "A123");
+            alkalmazott1.Lakcim = "Budapest, Kossuth utca 5.";
+            int[] alkalmazottSzuletesiDatum1 = { 1990, 5, 15 };
+            alkalmazott1.szuletesiDatum = alkalmazottSzuletesiDatum1;
 
-            Console.Write("Születési hónap: ");
-            int honap = int.Parse(Console.ReadLine());
-
-            Console.Write("Születési nap: ");
-            int nap = int.Parse(Console.ReadLine());
-
-            Console.Write("Beosztás: ");
-            string beosztas = Console.ReadLine();
-
-            Console.Write("Fizetés: ");
-            double fizetes = double.Parse(Console.ReadLine());
-
-            int[] szuletesiDatum = { ev, honap, nap };
-
-            Console.Write("Osztály kódja: ");
-            string osztalyKod = Console.ReadLine();
-
-            Szemely szemely = new Szemely(nev, lakcim, szuletesiDatum);
-            Console.WriteLine(szemely);
-            Console.WriteLine(szemely.Kor());
-
-            Alkalmazott alkalmazott1 = new Alkalmazott(nev, beosztas, fizetes);
-            alkalmazott1.szuletesiDatum = szuletesiDatum;
-
-            Console.WriteLine("\nSzemély 1 adatai:");
-            Console.WriteLine(szemely.ToString());
-            Console.WriteLine($"Kor: {szemely.Kor()} év");
+            Alkalmazott alkalmazott2 = new Alkalmazott("Jane Smith", "Tesztelő", 35000, "B456");
+            alkalmazott2.Lakcim = "New York, 123 Main St";
+            int[] alkalmazottSzuletesiDatum2 = { 1985, 8, 25 };
+            alkalmazott2.szuletesiDatum = alkalmazottSzuletesiDatum2;
 
             Console.WriteLine("\nAlkalmazott 1 adatai:");
             Console.WriteLine(alkalmazott1.ToString());
             Console.WriteLine($"Kor: {alkalmazott1.Kor()} év");
-            Console.WriteLine($"Név: {alkalmazott1.Nev}");
+            Console.WriteLine($"Név és beosztás: {alkalmazott1.Nev}");
 
-            Console.Read();
+            Console.WriteLine("\nAlkalmazott 2 adatai:");
+            Console.WriteLine(alkalmazott2.ToString());
+            Console.WriteLine($"Kor: {alkalmazott2.Kor()} év");
+            Console.WriteLine($"Név és beosztás: {alkalmazott2.Nev}");
+
+            // Vállalat példány létrehozása és alkalmazottak hozzáadása
+            Vállalat vallalat = new Vállalat("V123", "IT Részleg");
+            vallalat.Csoportbontás = new Dictionary<string, List<Alkalmazott>>();
+
+            vallalat.Belep(alkalmazott1);
+            vallalat.Belep(alkalmazott2);
+
+            Console.WriteLine("\nVállalat adatai:");
+            Console.WriteLine(vallalat.ToString());
+
+            Console.WriteLine("\nAlkalmazottak listázása:");
+            vallalat.ListazAlkalmazottak("A123");
+            vallalat.ListazAlkalmazottak("B456");
+
+            vallalat.Kilep(alkalmazott1);
+
+            Console.WriteLine("\nVállalat adatai:");
+            Console.WriteLine(vallalat.ToString());
+
+            Console.WriteLine("\nAlkalmazottak listázása:");
+            vallalat.ListazAlkalmazottak("A123");
+            vallalat.ListazAlkalmazottak("B456");
+
+            vallalat.Modosit(alkalmazott2, 100000);
+            Console.WriteLine("\nVállalat adatai:");
+            Console.WriteLine(vallalat.ToString());
+
+            Console.WriteLine("\nAlkalmazottak listázása:");
+            vallalat.ListazAlkalmazottak("A123");
+            vallalat.ListazAlkalmazottak("B456");
+
+            Console.ReadLine();
         }
     }
 }
